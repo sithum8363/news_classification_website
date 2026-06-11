@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Article</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #0d0f14;
+            color: #e8ecf5;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .article-shell {
+            width: min(760px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+        .back-link {
+            color: #8fa8ff;
+            display: inline-block;
+            margin-bottom: 24px;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .article-card {
+            background: #151820;
+            border: 1px solid #252a3a;
+            border-radius: 8px;
+            padding: 28px;
+        }
+        .meta {
+            color: #8d96b5;
+            font-size: 0.85rem;
+            margin: 0 0 12px;
+        }
+        h1 {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            line-height: 1.15;
+            margin: 0 0 20px;
+        }
+        #content {
+            color: #c7cede;
+            font-size: 1.05rem;
+            margin: 0;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+
+<main class="article-shell">
+    <a class="back-link" href="newsfeed.html">Back to news feed</a>
+    <article class="article-card">
+        <p class="meta" id="meta"></p>
+        <h1 id="title">Loading article...</h1>
+        <p id="content"></p>
+    </article>
+</main>
+
+<script>
+
+const id = new URLSearchParams(
+    window.location.search
+).get("id");
+
+const titleEl = document.getElementById("title");
+const contentEl = document.getElementById("content");
+const metaEl = document.getElementById("meta");
+
+function renderArticle(news) {
+    titleEl.textContent = news.headline || "Untitled article";
+    contentEl.textContent = news.content || news.summary || "No article content available.";
+    metaEl.textContent = [news.source, news.time].filter(Boolean).join(" | ");
+}
+
+function showError(message) {
+    titleEl.textContent = "Article not found";
+    contentEl.textContent = message;
+    metaEl.textContent = "";
+}
+
+function getStoredArticle() {
+    try {
+        const articles = JSON.parse(sessionStorage.getItem("pulseDeskArticles") || "[]");
+        return articles.find(article => String(article.id) === String(id));
+    } catch (error) {
+        return null;
+    }
+}
+
+async function loadArticle() {
+    if (!id) {
+        showError("Please open an article from the news feed.");
+        return;
+    }
+
+    const storedArticle = getStoredArticle();
+    if (storedArticle) {
+        renderArticle(storedArticle);
+        return;
+    }
+
+    try {
+        const res = await fetch("http://localhost:5000/news/" + encodeURIComponent(id));
+        if (!res.ok) {
+            throw new Error("Article not found");
+        }
+        renderArticle(await res.json());
+    } catch (error) {
+        showError("Could not load this article. Please go back to the feed and open it again.");
+    }
+}
+
+loadArticle();
+
+</script>
+
+</body>
+</html>
