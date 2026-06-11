@@ -146,7 +146,7 @@ Returns a specific article.
 
 ## Machine Learning Model
 
-The project uses a fine-tuned BERT model stored in:
+The project uses a fine-tuned BERT model stored in: https://huggingface.co/sithum8363/new_classifiaction_bert
 
 ```text
 bert_news_model_clustering/
