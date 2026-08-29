@@ -35,16 +35,15 @@ for page in range(1, 20):
 df = pd.DataFrame(all_data)
 
 
-save_path = "bsithum8363/new_classifiaction_bert"
+save_path = "sithum8363/new_classifiaction_bert"
 
 bert_model = BertForSequenceClassification.from_pretrained(
     save_path,
-    local_files_only=True
+    low_cpu_mem_usage=True
 )
 
 tokenizer = AutoTokenizer.from_pretrained(
     save_path,
-    local_files_only=True
 )
 
 bert_model.eval()
