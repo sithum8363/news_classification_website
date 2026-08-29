@@ -7,6 +7,8 @@ import torch
 import numpy as np
 from transformers import AutoTokenizer, BertForSequenceClassification
 import json
+import os
+
 all_data = []
 
 category = "General"
@@ -33,7 +35,7 @@ for page in range(1, 20):
 df = pd.DataFrame(all_data)
 
 
-save_path = "bert_news_model_clustering"
+save_path = "bsithum8363/new_classifiaction_bert"
 
 bert_model = BertForSequenceClassification.from_pretrained(
     save_path,
@@ -126,4 +128,4 @@ def news():
     return jsonify(news_list)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", "10000"))
